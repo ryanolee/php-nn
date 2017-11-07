@@ -1,0 +1,39 @@
+<?php
+namespace nn;
+class edge implements \ArrayAccess {
+    private $container = array();
+    private static $node_id;
+    public function __construct(&$from,$weight,&$to) {
+        $this->container = [
+            $from,
+            $weight,
+            $to
+        ];
+        $this->_id=self::get_id();
+        $from->bind($this);
+    }
+
+    public function offsetSet($offset, $value) {
+        if (is_null($offset)) {
+            $this->container[] = $value;
+        } else {
+            $this->container[$offset] = $value;
+        }
+    }
+
+    public function offsetExists($offset) {
+        return isset($this->container[$offset]);
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->container[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+    }
+    private static function get_id(){
+        self::$node_id++;
+        return self::$node_id;
+    }
+}
